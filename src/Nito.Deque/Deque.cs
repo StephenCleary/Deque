@@ -33,8 +33,8 @@ namespace Nito
         /// <param name="capacity">The initial capacity. Must be greater than <c>0</c>.</param>
         public Deque(int capacity)
         {
-            if (capacity < 1)
-                throw new ArgumentOutOfRangeException("capacity", "Capacity must be greater than 0.");
+            if (capacity < 0)
+                throw new ArgumentOutOfRangeException("capacity", "Capacity may not be negative.");
             _buffer = new T[capacity];
         }
 
@@ -450,11 +450,8 @@ namespace Nito
 
             set
             {
-                if (value < 1)
-                    throw new ArgumentOutOfRangeException("value", "Capacity must be greater than 0.");
-
                 if (value < Count)
-                    throw new InvalidOperationException("Capacity cannot be set to a value less than Count");
+                    throw new ArgumentOutOfRangeException("value", "Capacity cannot be set to a value less than Count");
 
                 if (value == _buffer.Length)
                     return;
@@ -718,7 +715,7 @@ namespace Nito
         {
             if (IsFull)
             {
-                Capacity = Capacity * 2;
+                Capacity = (Capacity == 0) ? 1 : Capacity * 2;
             }
         }
 

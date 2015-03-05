@@ -9,17 +9,25 @@ namespace UnitTests
     public class Deque
     {
         [Fact]
-        public void Capacity_SetTo0_ThrowsException()
+        public void Capacity_SetTo0_ActsLikeList()
         {
+            var list = new List<int>();
+            list.Capacity = 0;
+            Assert.Equal(0, list.Capacity);
+
             var deque = new Deque<int>();
-            Assert.ThrowsAny<ArgumentException>(() => { deque.Capacity = 0; });
+            deque.Capacity = 0;
+            Assert.Equal(0, deque.Capacity);
         }
 
         [Fact]
-        public void Capacity_SetNegative_ThrowsException()
+        public void Capacity_SetNegative_ActsLikeList()
         {
+            var list = new List<int>();
+            Assert.Throws<ArgumentOutOfRangeException>("value", () => { list.Capacity = -1; });
+
             var deque = new Deque<int>();
-            Assert.ThrowsAny<ArgumentException>(() => { deque.Capacity = -1; });
+            Assert.Throws<ArgumentOutOfRangeException>("value", () => { deque.Capacity = -1; });
         }
 
         [Fact]
@@ -63,11 +71,15 @@ namespace UnitTests
         }
 
         [Fact]
-        public void Capacity_Set_SmallerThanCount_ThrowsException()
+        public void Capacity_Set_SmallerThanCount_ActsLikeList()
         {
+            var list = new List<int>(new int[] { 1, 2, 3 });
+            Assert.Equal(3, list.Capacity);
+            Assert.Throws<ArgumentOutOfRangeException>("value", () => { list.Capacity = 2; });
+
             var deque = new Deque<int>(new int[] { 1, 2, 3 });
             Assert.Equal(3, deque.Capacity);
-            Assert.ThrowsAny<InvalidOperationException>(() => { deque.Capacity = 2; });
+            Assert.Throws<ArgumentOutOfRangeException>("value", () => { deque.Capacity = 2; });
         }
 
         [Fact]
@@ -90,9 +102,21 @@ namespace UnitTests
         }
 
         [Fact]
-        public void Constructor_CapacityOf0_ThrowsException()
+        public void Constructor_CapacityOf0_ActsLikeList()
         {
-            Assert.ThrowsAny<ArgumentException>(() => new Deque<int>(0));
+            var list = new List<int>(0);
+            Assert.Equal(0, list.Capacity);
+
+            var deque = new Deque<int>(0);
+            Assert.Equal(0, deque.Capacity);
+        }
+
+        [Fact]
+        public void Constructor_CapacityOf0_PermitsAdd()
+        {
+            var deque = new Deque<int>(0);
+            deque.AddToBack(13);
+            Assert.Equal(new[] { 13 }, deque);
         }
 
         [Fact]
