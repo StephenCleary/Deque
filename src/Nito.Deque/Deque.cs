@@ -86,13 +86,13 @@ namespace Nito
         {
             get
             {
-                CheckExistingIndexArgument(this.Count, index);
+                CheckExistingIndexArgument(Count, index);
                 return DoGetItem(index);
             }
 
             set
             {
-                CheckExistingIndexArgument(this.Count, index);
+                CheckExistingIndexArgument(Count, index);
                 DoSetItem(index, value);
             }
         }
@@ -200,7 +200,7 @@ namespace Nito
             if (array == null)
                 throw new ArgumentNullException("array", "Array is null");
 
-            int count = this.Count;
+            int count = Count;
             CheckRangeArguments(array.Length, arrayIndex, count);
             CopyToArray(array, arrayIndex);
         }
@@ -254,7 +254,7 @@ namespace Nito
         /// </returns>
         public IEnumerator<T> GetEnumerator()
         {
-            int count = this.Count;
+            int count = Count;
             for (int i = 0; i != count; ++i)
             {
                 yield return DoGetItem(i);
@@ -269,7 +269,7 @@ namespace Nito
         /// </returns>
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
-            return this.GetEnumerator();
+            return GetEnumerator();
         }
 
         #endregion
@@ -637,7 +637,7 @@ namespace Nito
                     _buffer[DequeIndexToBufferIndex(writeIndex + j)] = _buffer[DequeIndexToBufferIndex(j)];
 
                 // Rotate to the new view
-                this.PreDecrement(collectionCount);
+                PreDecrement(collectionCount);
             }
             else
             {
@@ -672,7 +672,7 @@ namespace Nito
             if (index == 0)
             {
                 // Removing from the beginning: rotate to the new view
-                this.PostIncrement(collectionCount);
+                PostIncrement(collectionCount);
                 Count -= collectionCount;
                 return;
             }
@@ -694,7 +694,7 @@ namespace Nito
                     _buffer[DequeIndexToBufferIndex(writeIndex + j)] = _buffer[DequeIndexToBufferIndex(j)];
 
                 // Rotate to new view
-                this.PostIncrement(collectionCount);
+                PostIncrement(collectionCount);
             }
             else
             {
@@ -716,9 +716,9 @@ namespace Nito
         /// </summary>
         private void EnsureCapacityForOneElement()
         {
-            if (this.IsFull)
+            if (IsFull)
             {
-                this.Capacity = this.Capacity * 2;
+                Capacity = Capacity * 2;
             }
         }
 
@@ -754,10 +754,10 @@ namespace Nito
             var source = CollectionHelpers.ReifyCollection(collection);
             int collectionCount = source.Count;
 
-            // Overflow-safe check for "this.Count + collectionCount > this.Capacity"
+            // Overflow-safe check for "Count + collectionCount > Capacity"
             if (collectionCount > Capacity - Count)
             {
-                this.Capacity = checked(Count + collectionCount);
+                Capacity = checked(Count + collectionCount);
             }
 
             if (collectionCount == 0)
@@ -765,7 +765,7 @@ namespace Nito
                 return;
             }
 
-            this.DoInsertRange(index, source);
+            DoInsertRange(index, source);
         }
 
         /// <summary>
@@ -784,7 +784,7 @@ namespace Nito
                 return;
             }
 
-            this.DoRemoveRange(offset, count);
+            DoRemoveRange(offset, count);
         }
 
         /// <summary>
@@ -794,10 +794,10 @@ namespace Nito
         /// <exception cref="InvalidOperationException">The deque is empty.</exception>
         public T RemoveFromBack()
         {
-            if (this.IsEmpty)
+            if (IsEmpty)
                 throw new InvalidOperationException("The deque is empty.");
 
-            return this.DoRemoveFromBack();
+            return DoRemoveFromBack();
         }
 
         /// <summary>
@@ -807,10 +807,10 @@ namespace Nito
         /// <exception cref="InvalidOperationException">The deque is empty.</exception>
         public T RemoveFromFront()
         {
-            if (this.IsEmpty)
+            if (IsEmpty)
                 throw new InvalidOperationException("The deque is empty.");
 
-            return this.DoRemoveFromFront();
+            return DoRemoveFromFront();
         }
 
         /// <summary>
@@ -818,8 +818,8 @@ namespace Nito
         /// </summary>
         public void Clear()
         {
-            this._offset = 0;
-            this.Count = 0;
+            _offset = 0;
+            Count = 0;
         }
 
         /// <summary>
