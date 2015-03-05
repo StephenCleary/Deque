@@ -275,24 +275,41 @@ namespace Nito
         #endregion
         #region ObjectListImplementations
 
+        private static bool IsT(object value)
+        {
+            if (value is T)
+                return true;
+            if (value != null)
+                return false;
+            return default(T) == null;
+        }
+
         int System.Collections.IList.Add(object value)
         {
+            if (value == null && default(T) != null)
+                throw new ArgumentNullException("value", "Value cannot be null.");
+            if (!IsT(value))
+                throw new ArgumentException("Value is of incorrect type.", "value");
             AddToBack((T)value);
             return Count - 1;
         }
 
         bool System.Collections.IList.Contains(object value)
         {
-            return ((ICollection<T>)this).Contains((T)value);
+            return IsT(value) ? ((ICollection<T>)this).Contains((T)value) : false;
         }
 
         int System.Collections.IList.IndexOf(object value)
         {
-            return IndexOf((T)value);
+            return IsT(value) ? IndexOf((T)value) : -1;
         }
 
         void System.Collections.IList.Insert(int index, object value)
         {
+            if (value == null && default(T) != null)
+                throw new ArgumentNullException("value", "Value cannot be null.");
+            if (!IsT(value))
+                throw new ArgumentException("Value is of incorrect type.", "value");
             Insert(index, (T)value);
         }
 
@@ -308,7 +325,8 @@ namespace Nito
 
         void System.Collections.IList.Remove(object value)
         {
-            Remove((T)value);
+            if (IsT(value))
+                Remove((T)value);
         }
 
         object System.Collections.IList.this[int index]
@@ -320,6 +338,10 @@ namespace Nito
 
             set
             {
+                if (value == null && default(T) != null)
+                    throw new ArgumentNullException("value", "Value cannot be null.");
+                if (!IsT(value))
+                    throw new ArgumentException("Value is of incorrect type.", "value");
                 this[index] = (T)value;
             }
         }
@@ -334,9 +356,13 @@ namespace Nito
             {
                 CopyToArray(array, index);
             }
-            catch (InvalidCastException ex)
+            catch (ArrayTypeMismatchException ex)
             {
-                throw new ArgumentException("Destination array is of incorrect type.", ex);
+                throw new ArgumentException("Destination array is of incorrect type.", "array", ex);
+            }
+            catch (RankException ex)
+            {
+                throw new ArgumentException("Destination array must be single dimensional.", "array", ex);
             }
         }
 
