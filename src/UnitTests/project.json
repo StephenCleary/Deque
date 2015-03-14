@@ -3,7 +3,7 @@
     "dependencies": {
         "xunit": "2.0.0.0-rc3-build2880",
         "xunit.runner.aspnet": "2.0.0.0-rc3-build52",
-        "Nito.Deque": ""
+        "Nito.Collections.Deque": ""
     },
 
     "commands": {

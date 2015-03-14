@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Nito
+namespace Nito.Collections
 {
     internal static class CollectionHelpers
     {

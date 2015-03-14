@@ -1,5 +1,5 @@
 ﻿using System;
-using Nito;
+using Nito.Collections;
 using Xunit;
 using System.Collections.Generic;
 using System.Collections;
