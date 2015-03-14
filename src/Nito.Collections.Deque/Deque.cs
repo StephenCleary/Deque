@@ -10,7 +10,7 @@ namespace Nito.Collections
     /// <typeparam name="T">The type of elements contained in the deque.</typeparam>
     [DebuggerDisplay("Count = {Count}, Capacity = {Capacity}")]
     [DebuggerTypeProxy(typeof(Deque<>.DebugView))]
-    public sealed class Deque<T> : IList<T>, System.Collections.IList
+    public sealed class Deque<T> : IList<T>, IReadOnlyList<T>, System.Collections.IList
     {
         /// <summary>
         /// The default capacity.
