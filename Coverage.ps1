@@ -1,6 +1,21 @@
 pushd
 cd artifacts\bin\Nito.Collections.Deque\Debug\net45
 
+Function Verify-OnlyOnePackage
+{
+  param ($name)
+
+  $location = $env:USERPROFILE + '\.k\packages\' + $name
+  If ((Get-ChildItem $location).Count -ne 1)
+  {
+    throw 'Invalid number of packages installed at ' + $location
+  }
+}
+
+Verify-OnlyOnePackage 'OpenCover'
+Verify-OnlyOnePackage 'coveralls.io'
+Verify-OnlyOnePackage 'ReportGenerator'
+
 # Execute OpenCover with a target of "k test"
 $original_KRE_APPBASE = $env:KRE_APPBASE
 $env:KRE_APPBASE = "../../../../../test/UnitTests"
