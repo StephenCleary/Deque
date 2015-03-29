@@ -1,3 +1,4 @@
+$ErrorActionPreference = "Stop"
 pushd
 cd artifacts\bin\Nito.Collections.Deque\Debug\net45
 
