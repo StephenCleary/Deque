@@ -1,20 +1,19 @@
 {
-    "version": "1.0.0-alpha-2",
-    "authors": [ "Stephen Cleary" ],
-    "description": "A double-ended queue.",
-
-    "compilationOptions": {
-        "warningsAsErrors": true
-    },
-
-    "frameworks": {
-        "net45": { },
-        "aspnetcore50": {
-            "dependencies": {
-                "System.Runtime": "4.0.20-beta-22523",
-                "System.Diagnostics.Debug": "4.0.10.0-beta-22605",
-                "System.Collections": "4.0.10.0-beta-22605"
-            }
-        }
+  "version": "1.0.0-beta-1",
+  "authors": [ "Stephen Cleary" ],
+  "description": "A double-ended queue.",
+  "compilationOptions": {
+    "warningsAsErrors": true
+  },
+  "frameworks": {
+    "net45": { },
+    "netcore50": {
+      "dependencies": { }
     }
+  },
+  "dependencies": {
+    "System.Collections": "4.0.11-beta-23516",
+    "System.Diagnostics.Debug": "4.0.11-beta-23516",
+    "System.Runtime": "4.0.21-beta-23516"
+  }
 }
