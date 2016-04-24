@@ -783,6 +783,16 @@ namespace UnitTests
         }
 
         [Fact]
+        public void NongenericAdd_WrongType_ActsLikeList()
+        {
+            var list = new List<int>() as IList;
+            Assert.Throws<ArgumentException>("value", () => list.Add(this));
+
+            var deque = new Deque<int>() as IList;
+            Assert.Throws<ArgumentException>("value", () => deque.Add(this));
+        }
+
+        [Fact]
         public void NongenericNullableType_AllowsInsertingNull()
         {
             var deque = new Deque<int?>();
@@ -813,7 +823,7 @@ namespace UnitTests
         }
 
         [Fact]
-        public void NongenericStruct_InsertNull_ActsLikeList()
+        public void NongenericStruct_AddNull_ActsLikeList()
         {
             var list = new List<int>() as IList;
             Assert.Throws<ArgumentNullException>(() => list.Add(null));
@@ -823,7 +833,7 @@ namespace UnitTests
         }
 
         [Fact]
-        public void NongenericGenericStruct_InsertNull_ActsLikeList()
+        public void NongenericGenericStruct_AddNull_ActsLikeList()
         {
             var list = new List<KeyValuePair<int, int>>() as IList;
             Assert.Throws<ArgumentNullException>(() => list.Add(null));
@@ -870,6 +880,16 @@ namespace UnitTests
 
             var deque = new Deque<int>() as IList;
             Assert.Throws<ArgumentException>("value", () => deque.Insert(0, this));
+        }
+
+        [Fact]
+        public void NongenericStruct_InsertNull_ActsMostlyLikeList()
+        {
+            var list = new List<int>() as IList;
+            Assert.Throws<ArgumentNullException>("item", () => list.Insert(0, null)); // Should probably be "value".
+
+            var deque = new Deque<int>() as IList;
+            Assert.Throws<ArgumentNullException>("value", () => deque.Insert(0, null));
         }
 
         [Fact]
@@ -920,6 +940,25 @@ namespace UnitTests
 
             var deque = new Deque<int>(new[] { 13 }) as IList;
             Assert.Throws<ArgumentException>("value", () => { deque[0] = this; });
+        }
+
+        [Fact]
+        public void NongenericStruct_SetNull_ActsLikeList()
+        {
+            var list = new List<int>(new[] { 13 }) as IList;
+            Assert.Throws<ArgumentNullException>("value", () => { list[0] = null; });
+
+            var deque = new Deque<int>(new[] { 13 }) as IList;
+            Assert.Throws<ArgumentNullException>("value", () => { deque[0] = null; });
+        }
+
+        [Fact]
+        public void ToArray_CopiesToNewArray()
+        {
+            var deque = new Deque<int>(new[] { 0, 1 });
+            deque.AddToBack(13);
+            var result = deque.ToArray();
+            Assert.Equal(new[] { 0, 1, 13 }, result);
         }
     }
 }
