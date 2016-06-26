@@ -6,14 +6,17 @@ environment:
     secure: waESdN0qLkOHxENdd86z/W5nbDbadt6XNnwJLCd+d/tfpIJN9w6xRT7X+nev5cMa
 install:
 - ps: >-
-    iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/aspnet/Home/dev/dnvminstall.ps1'))
+    nuget update -self
 
-    $env:Path = "C:\Program Files (x86)\MSBuild\14.0\Bin;" + [Environment]::GetEnvironmentVariables("Machine")["Path"] + ";" + [Environment]::GetEnvironmentVariables("User")["Path"]
+    nuget sources add -Name netcore -Source http://myget.org/F/dotnet-core
 
-    dnvm install 1.0.0-rc1-update2
-before_build:
-- ps: dnu restore
-build:
-  verbosity: minimal
+    Invoke-WebRequest "https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0-preview1/scripts/obtain/dotnet-install.ps1" -OutFile ".\dotnet-install.ps1"
+
+    $env:DOTNET_INSTALL_DIR = "$pwd\.dotnetcli"
+
+    & .\dotnet-install.ps1 -Channel "preview" -Version "1.0.0-beta-002071" -InstallDir "$env:DOTNET_INSTALL_DIR"
+	
+build: off
 test_script:
+- ps: dotnet restore
 - ps: ./Coverage.ps1
