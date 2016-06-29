@@ -1,12 +1,11 @@
 {
-  "version": "1.0.0-delta-1",
+  "version": "1.0.0-delta-2",
   "authors": [ "Stephen Cleary" ],
   "description": "A double-ended queue.",
   "buildOptions": {
     "warningsAsErrors": true
   },
   "frameworks": {
-    "net45": {},
     "netstandard1.0": {
       "dependencies": {
         "System.Collections": "4.0.11",
