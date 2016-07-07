@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0-delta-2",
+  "version": "1.0.0-delta-3",
   "authors": [ "Stephen Cleary" ],
   "description": "A double-ended queue.",
   "buildOptions": {
@@ -11,6 +11,13 @@
         "System.Collections": "4.0.11",
         "System.Diagnostics.Debug": "4.0.11",
         "System.Runtime": "4.1.0"
+      }
+    },
+    ".NETPortable,Version=v4.5,Profile=Profile259": {
+      "frameworkAssemblies": {
+        "System.Collections": "",
+        "System.Diagnostics.Debug": "",
+        "System.Runtime": ""
       }
     }
   }
