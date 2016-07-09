@@ -23,6 +23,9 @@ test_script:
 - ps: ./Coverage.ps1
 before_deploy:
 - ps: ./Build.ps1
+artifacts:
+  - path: **\*.nupkg
+    name: NuGet Packages
 deploy:
   provider: NuGet
   api_key:
