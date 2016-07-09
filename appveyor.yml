@@ -21,7 +21,7 @@ build: off
 test_script:
 - ps: dotnet restore
 - ps: ./Coverage.ps1
-before_deploy:
+build_script:
 - ps: ./Build.ps1
 artifacts:
   - path: '**\*.nupkg'
