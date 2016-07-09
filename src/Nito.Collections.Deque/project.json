@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0-delta-5",
+  "version": "1.0.0-delta-6",
   "authors": [ "Stephen Cleary" ],
   "description": "A double-ended queue.",
   "buildOptions": {
