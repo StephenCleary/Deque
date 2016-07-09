@@ -4,6 +4,9 @@ configuration: Debug
 environment:
   COVERALLS_REPO_TOKEN:
     secure: waESdN0qLkOHxENdd86z/W5nbDbadt6XNnwJLCd+d/tfpIJN9w6xRT7X+nev5cMa
+branches:
+  only:
+    - master
 install:
 - ps: >-
     nuget update -self
@@ -18,3 +21,11 @@ build: off
 test_script:
 - ps: dotnet restore
 - ps: ./Coverage.ps1
+before_deploy:
+- ps: ./Build.ps1
+deploy:
+  provider: NuGet
+  api_key:
+    secure: QeC34B7ohkvqbwCOKmavQWhitZNYLX/EFdgK8CfL5jEujWw2L85qrzuME8CQRBEb
+  on:
+    appveyor_repo_tag: true
