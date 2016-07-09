@@ -1,2 +1,7 @@
-cd src/Nito.Collections.Deque
-dotnet pack -c Release
+cd src
+Get-ChildItem | foreach {
+  cd $_
+  dotnet pack -c Release
+  cd ..
+}
+cd ..
