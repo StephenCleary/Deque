@@ -1,10 +1,13 @@
 {
-  "version": "1.0.0-delta-4",
+  "version": "1.0.0-delta-5",
   "authors": [ "Stephen Cleary" ],
   "description": "A double-ended queue.",
   "buildOptions": {
     "warningsAsErrors": true,
     "xmlDoc": true
+  },
+  "packOptions": {
+    "projectUrl": "https://github.com/StephenCleary/Deque"
   },
   "frameworks": {
     "netstandard1.0": {
