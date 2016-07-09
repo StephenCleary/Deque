@@ -17,12 +17,10 @@ install:
 
     & .\dotnet-install.ps1 -Channel "preview" -Version "1.0.0-preview2-003121" -InstallDir "$env:DOTNET_INSTALL_DIR"
 
-build: off
-test_script:
-- ps: dotnet restore
-- ps: ./Coverage.ps1
 build_script:
 - ps: ./Build.ps1
+test_script:
+- ps: ./Coverage.ps1
 artifacts:
   - path: '**\*.nupkg'
     name: NuGet Packages

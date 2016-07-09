@@ -1,3 +1,4 @@
+dotnet restore
 cd src
 Get-ChildItem | foreach {
   cd $_
