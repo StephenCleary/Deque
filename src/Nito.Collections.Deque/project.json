@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0-delta-9",
+  "version": "1.0.0-delta-10",
   "authors": [ "Stephen Cleary" ],
   "description": "A double-ended queue.",
   "buildOptions": {
@@ -7,7 +7,13 @@
     "xmlDoc": true
   },
   "packOptions": {
-    "projectUrl": "https://github.com/StephenCleary/Deque"
+    "tags": [ "collection", "deque", "dequeue" ],
+    "projectUrl": "https://github.com/StephenCleary/Deque",
+    "licenseUrl": "https://raw.githubusercontent.com/StephenCleary/Deque/master/LICENSE",
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/StephenCleary/Deque.git"
+    }
   },
   "frameworks": {
     "netstandard1.0": {
@@ -29,7 +35,6 @@
             "type": "build"
         }
       }
-    },
-    "NET46": {}
+    }
   }
 }
