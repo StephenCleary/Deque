@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0-delta-8",
+  "version": "1.0.0-delta-9",
   "authors": [ "Stephen Cleary" ],
   "description": "A double-ended queue.",
   "buildOptions": {
@@ -19,10 +19,17 @@
     },
     ".NETPortable,Version=v4.5,Profile=Profile259": {
       "frameworkAssemblies": {
-        "System.Collections": "",
-        "System.Diagnostics.Debug": "",
-        "System.Runtime": ""
+        "System.Collections": {
+            "type": "build"
+        },
+        "System.Diagnostics.Debug": {
+            "type": "build"
+        },
+        "System.Runtime": {
+            "type": "build"
+        }
       }
-    }
+    },
+    "NET46": {}
   }
 }
