@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0-eta.1",
+  "version": "1.0.0-eta-01",
   "authors": [ "Stephen Cleary" ],
   "description": "A double-ended queue.",
   "buildOptions": {
