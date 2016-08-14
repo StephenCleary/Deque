@@ -34,16 +34,19 @@ namespace Nito.Collections
         public Deque(int capacity)
         {
             if (capacity < 0)
-                throw new ArgumentOutOfRangeException("capacity", "Capacity may not be negative.");
+                throw new ArgumentOutOfRangeException(nameof(capacity), "Capacity may not be negative.");
             _buffer = new T[capacity];
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Deque&lt;T&gt;"/> class with the elements from the specified collection.
         /// </summary>
-        /// <param name="collection">The collection.</param>
+        /// <param name="collection">The collection. May not be <c>null</c>.</param>
         public Deque(IEnumerable<T> collection)
         {
+            if (collection == null)
+                throw new ArgumentNullException(nameof(collection));
+
             var source = CollectionHelpers.ReifyCollection(collection);
             var count = source.Count;
             if (count > 0)
@@ -198,7 +201,7 @@ namespace Nito.Collections
         void ICollection<T>.CopyTo(T[] array, int arrayIndex)
         {
             if (array == null)
-                throw new ArgumentNullException("array", "Array is null");
+                throw new ArgumentNullException(nameof(array));
 
             int count = Count;
             CheckRangeArguments(array.Length, arrayIndex, count);
@@ -212,6 +215,9 @@ namespace Nito.Collections
         /// <param name="arrayIndex">The optional index in the destination array at which to begin writing.</param>
         private void CopyToArray(Array array, int arrayIndex = 0)
         {
+            if (array == null)
+                throw new ArgumentNullException(nameof(array));
+
             if (IsSplit)
             {
                 // The existing buffer is split, so we have to copy it in parts
@@ -287,9 +293,9 @@ namespace Nito.Collections
         int System.Collections.IList.Add(object value)
         {
             if (value == null && default(T) != null)
-                throw new ArgumentNullException("value", "Value cannot be null.");
+                throw new ArgumentNullException(nameof(value), "Value cannot be null.");
             if (!IsT(value))
-                throw new ArgumentException("Value is of incorrect type.", "value");
+                throw new ArgumentException("Value is of incorrect type.", nameof(value));
             AddToBack((T)value);
             return Count - 1;
         }
@@ -339,9 +345,9 @@ namespace Nito.Collections
             set
             {
                 if (value == null && default(T) != null)
-                    throw new ArgumentNullException("value", "Value cannot be null.");
+                    throw new ArgumentNullException(nameof(value), "Value cannot be null.");
                 if (!IsT(value))
-                    throw new ArgumentException("Value is of incorrect type.", "value");
+                    throw new ArgumentException("Value is of incorrect type.", nameof(value));
                 this[index] = (T)value;
             }
         }
@@ -349,7 +355,7 @@ namespace Nito.Collections
         void System.Collections.ICollection.CopyTo(Array array, int index)
         {
             if (array == null)
-                throw new ArgumentNullException("array", "Destination array cannot be null.");
+                throw new ArgumentNullException(nameof(array), "Destination array cannot be null.");
             CheckRangeArguments(array.Length, index, Count);
 
             try
@@ -358,11 +364,11 @@ namespace Nito.Collections
             }
             catch (ArrayTypeMismatchException ex)
             {
-                throw new ArgumentException("Destination array is of incorrect type.", "array", ex);
+                throw new ArgumentException("Destination array is of incorrect type.", nameof(array), ex);
             }
             catch (RankException ex)
             {
-                throw new ArgumentException("Destination array must be single dimensional.", "array", ex);
+                throw new ArgumentException("Destination array must be single dimensional.", nameof(array), ex);
             }
         }
 
@@ -389,7 +395,7 @@ namespace Nito.Collections
         {
             if (index < 0 || index > sourceLength)
             {
-                throw new ArgumentOutOfRangeException("index", "Invalid new index " + index + " for source length " + sourceLength);
+                throw new ArgumentOutOfRangeException(nameof(index), "Invalid new index " + index + " for source length " + sourceLength);
             }
         }
 
@@ -403,7 +409,7 @@ namespace Nito.Collections
         {
             if (index < 0 || index >= sourceLength)
             {
-                throw new ArgumentOutOfRangeException("index", "Invalid existing index " + index + " for source length " + sourceLength);
+                throw new ArgumentOutOfRangeException(nameof(index), "Invalid existing index " + index + " for source length " + sourceLength);
             }
         }
 
@@ -419,12 +425,12 @@ namespace Nito.Collections
         {
             if (offset < 0)
             {
-                throw new ArgumentOutOfRangeException("offset", "Invalid offset " + offset);
+                throw new ArgumentOutOfRangeException(nameof(offset), "Invalid offset " + offset);
             }
 
             if (count < 0)
             {
-                throw new ArgumentOutOfRangeException("count", "Invalid count " + count);
+                throw new ArgumentOutOfRangeException(nameof(count), "Invalid count " + count);
             }
 
             if (sourceLength - offset < count)
@@ -477,7 +483,7 @@ namespace Nito.Collections
             set
             {
                 if (value < Count)
-                    throw new ArgumentOutOfRangeException("value", "Capacity cannot be set to a value less than Count");
+                    throw new ArgumentOutOfRangeException(nameof(value), "Capacity cannot be set to a value less than Count");
 
                 if (value == _buffer.Length)
                     return;

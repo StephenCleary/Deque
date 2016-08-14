@@ -8,6 +8,9 @@ namespace Nito.Collections
     {
         public static IReadOnlyCollection<T> ReifyCollection<T>(IEnumerable<T> source)
         {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+
             var result = source as IReadOnlyCollection<T>;
             if (result != null)
                 return result;
@@ -27,6 +30,8 @@ namespace Nito.Collections
 
             public NongenericCollectionWrapper(ICollection collection)
             {
+                if (collection == null)
+                    throw new ArgumentNullException(nameof(collection));
                 _collection = collection;
             }
 
@@ -56,6 +61,8 @@ namespace Nito.Collections
 
             public CollectionWrapper(ICollection<T> collection)
             {
+                if (collection == null)
+                    throw new ArgumentNullException(nameof(collection));
                 _collection = collection;
             }
 
