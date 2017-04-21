@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26403.7
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{BC7CC3DD-D397-484C-80AD-D220DA2A26AA}"
 EndProject
@@ -10,14 +10,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		appveyor.yml = appveyor.yml
 		Build.ps1 = Build.ps1
 		Coverage.ps1 = Coverage.ps1
-		global.json = global.json
+		Version.ps1 = Version.ps1
 	EndProjectSection
-EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Nito.Collections.Deque", "src\Nito.Collections.Deque\Nito.Collections.Deque.xproj", "{83983561-B471-4D13-97C4-B0F37D50AD9B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{D1E43B37-4C8F-4BC9-B3E1-19F7292F734B}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "UnitTests", "test\UnitTests\UnitTests.xproj", "{3E065FC5-0244-4FA7-8F45-BFC57B439056}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nito.Collections.Deque", "src\Nito.Collections.Deque\Nito.Collections.Deque.csproj", "{83983561-B471-4D13-97C4-B0F37D50AD9B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests", "test\UnitTests\UnitTests.csproj", "{3E065FC5-0244-4FA7-8F45-BFC57B439056}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
