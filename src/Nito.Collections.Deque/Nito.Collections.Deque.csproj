@@ -4,7 +4,7 @@
     <Description>A double-ended queue.</Description>
     <Authors>Stephen Cleary</Authors>
     <TargetFrameworks>netstandard1.0;netstandard2.0</TargetFrameworks>
-    <VersionPrefix>1.0.3</VersionPrefix>
+    <VersionPrefix>1.0.4</VersionPrefix>
     <VersionSuffix></VersionSuffix>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
