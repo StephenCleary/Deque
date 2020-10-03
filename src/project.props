@@ -2,6 +2,5 @@
   <PropertyGroup>
     <VersionPrefix>1.0.4</VersionPrefix>
     <Authors>Stephen Cleary</Authors>
-    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 </Project>
