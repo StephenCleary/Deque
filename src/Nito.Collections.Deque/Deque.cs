@@ -74,17 +74,9 @@ namespace Nito.Collections
         /// Gets a value indicating whether this list is read-only. This implementation always returns <c>false</c>.
         /// </summary>
         /// <returns>true if this list is read-only; otherwise, false.</returns>
-        bool ICollection<T>.IsReadOnly
-        {
-            get { return false; }
-        }
+        bool ICollection<T>.IsReadOnly => false;
 
-        /// <summary>
-        /// Gets or sets the item at the specified index.
-        /// </summary>
-        /// <param name="index">The index of the item to get or set.</param>
-        /// <exception cref="T:System.ArgumentOutOfRangeException"><paramref name="index"/> is not a valid index in this list.</exception>
-        /// <exception cref="T:System.NotSupportedException">This property is set and the list is read-only.</exception>
+        /// <inheritdoc cref="IList{T}.this" />
         public T this[int index]
         {
             get
@@ -100,44 +92,21 @@ namespace Nito.Collections
             }
         }
 
-        /// <summary>
-        /// Inserts an item to this list at the specified index.
-        /// </summary>
-        /// <param name="index">The zero-based index at which <paramref name="item"/> should be inserted.</param>
-        /// <param name="item">The object to insert into this list.</param>
-        /// <exception cref="T:System.ArgumentOutOfRangeException">
-        /// <paramref name="index"/> is not a valid index in this list.
-        /// </exception>
-        /// <exception cref="T:System.NotSupportedException">
-        /// This list is read-only.
-        /// </exception>
+        /// <inheritdoc/>
         public void Insert(int index, T item)
         {
             CheckNewIndexArgument(Count, index);
             DoInsert(index, item);
         }
 
-        /// <summary>
-        /// Removes the item at the specified index.
-        /// </summary>
-        /// <param name="index">The zero-based index of the item to remove.</param>
-        /// <exception cref="T:System.ArgumentOutOfRangeException">
-        /// <paramref name="index"/> is not a valid index in this list.
-        /// </exception>
-        /// <exception cref="T:System.NotSupportedException">
-        /// This list is read-only.
-        /// </exception>
+        /// <inheritdoc cref="IList{T}.RemoveAt" />
         public void RemoveAt(int index)
         {
             CheckExistingIndexArgument(Count, index);
             DoRemoveAt(index);
         }
 
-        /// <summary>
-        /// Determines the index of a specific item in this list.
-        /// </summary>
-        /// <param name="item">The object to locate in this list.</param>
-        /// <returns>The index of <paramref name="item"/> if found in this list; otherwise, -1.</returns>
+        /// <inheritdoc/>
         public int IndexOf(T item)
         {
             var comparer = EqualityComparer<T>.Default;
@@ -152,25 +121,13 @@ namespace Nito.Collections
             return -1;
         }
 
-        /// <summary>
-        /// Adds an item to the end of this list.
-        /// </summary>
-        /// <param name="item">The object to add to this list.</param>
-        /// <exception cref="T:System.NotSupportedException">
-        /// This list is read-only.
-        /// </exception>
+        /// <inheritdoc/>
         void ICollection<T>.Add(T item)
         {
             DoInsert(Count, item);
         }
 
-        /// <summary>
-        /// Determines whether this list contains a specific value.
-        /// </summary>
-        /// <param name="item">The object to locate in this list.</param>
-        /// <returns>
-        /// true if <paramref name="item"/> is found in this list; otherwise, false.
-        /// </returns>
+        /// <inheritdoc/>
         bool ICollection<T>.Contains(T item)
         {
             var comparer = EqualityComparer<T>.Default;
@@ -182,22 +139,7 @@ namespace Nito.Collections
             return false;
         }
 
-        /// <summary>
-        /// Copies the elements of this list to an <see cref="T:System.Array"/>, starting at a particular <see cref="T:System.Array"/> index.
-        /// </summary>
-        /// <param name="array">The one-dimensional <see cref="T:System.Array"/> that is the destination of the elements copied from this slice. The <see cref="T:System.Array"/> must have zero-based indexing.</param>
-        /// <param name="arrayIndex">The zero-based index in <paramref name="array"/> at which copying begins.</param>
-        /// <exception cref="T:System.ArgumentNullException">
-        /// <paramref name="array"/> is null.
-        /// </exception>
-        /// <exception cref="T:System.ArgumentOutOfRangeException">
-        /// <paramref name="arrayIndex"/> is less than 0.
-        /// </exception>
-        /// <exception cref="T:System.ArgumentException">
-        /// <paramref name="arrayIndex"/> is equal to or greater than the length of <paramref name="array"/>.
-        /// -or-
-        /// The number of elements in the source <see cref="T:System.Collections.Generic.ICollection`1"/> is greater than the available space from <paramref name="arrayIndex"/> to the end of the destination <paramref name="array"/>.
-        /// </exception>
+        /// <inheritdoc/>
         void ICollection<T>.CopyTo(T[] array, int arrayIndex)
         {
             if (array == null)
@@ -209,7 +151,7 @@ namespace Nito.Collections
         }
 
         /// <summary>
-        /// Copies the deque elemens into an array. The resulting array always has all the deque elements contiguously.
+        /// Copies the deque elements into an array. The resulting array always has all the deque elements contiguously.
         /// </summary>
         /// <param name="array">The destination array.</param>
         /// <param name="arrayIndex">The optional index in the destination array at which to begin writing.</param>
@@ -232,16 +174,7 @@ namespace Nito.Collections
             }
         }
 
-        /// <summary>
-        /// Removes the first occurrence of a specific object from this list.
-        /// </summary>
-        /// <param name="item">The object to remove from this list.</param>
-        /// <returns>
-        /// true if <paramref name="item"/> was successfully removed from this list; otherwise, false. This method also returns false if <paramref name="item"/> is not found in this list.
-        /// </returns>
-        /// <exception cref="T:System.NotSupportedException">
-        /// This list is read-only.
-        /// </exception>
+        /// <inheritdoc/>
         public bool Remove(T item)
         {
             int index = IndexOf(item);
@@ -252,12 +185,7 @@ namespace Nito.Collections
             return true;
         }
 
-        /// <summary>
-        /// Returns an enumerator that iterates through the collection.
-        /// </summary>
-        /// <returns>
-        /// A <see cref="T:System.Collections.Generic.IEnumerator`1"/> that can be used to iterate through the collection.
-        /// </returns>
+        /// <inheritdoc/>
         public IEnumerator<T> GetEnumerator()
         {
             int count = Count;
@@ -267,12 +195,7 @@ namespace Nito.Collections
             }
         }
 
-        /// <summary>
-        /// Returns an enumerator that iterates through a collection.
-        /// </summary>
-        /// <returns>
-        /// An <see cref="T:System.Collections.IEnumerator"/> object that can be used to iterate through the collection.
-        /// </returns>
+        /// <inheritdoc/>
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
@@ -281,7 +204,7 @@ namespace Nito.Collections
         #endregion
         #region ObjectListImplementations
 
-        private static bool IsT(object value)
+        private static bool IsT(object? value)
         {
             if (value is T)
                 return true;
@@ -290,33 +213,33 @@ namespace Nito.Collections
             return default(T) == null;
         }
 
-        int System.Collections.IList.Add(object value)
+        int System.Collections.IList.Add(object? value)
         {
             if (value == null && default(T) != null)
                 throw new ArgumentNullException(nameof(value), "Value cannot be null.");
             if (!IsT(value))
                 throw new ArgumentException("Value is of incorrect type.", nameof(value));
-            AddToBack((T)value);
+            AddToBack((T)value!);
             return Count - 1;
         }
 
-        bool System.Collections.IList.Contains(object value)
+        bool System.Collections.IList.Contains(object? value)
         {
-            return IsT(value) ? ((ICollection<T>)this).Contains((T)value) : false;
+            return IsT(value) ? ((ICollection<T>)this).Contains((T)value!) : false;
         }
 
-        int System.Collections.IList.IndexOf(object value)
+        int System.Collections.IList.IndexOf(object? value)
         {
-            return IsT(value) ? IndexOf((T)value) : -1;
+            return IsT(value) ? IndexOf((T)value!) : -1;
         }
 
-        void System.Collections.IList.Insert(int index, object value)
+        void System.Collections.IList.Insert(int index, object? value)
         {
             if (value == null && default(T) != null)
-                throw new ArgumentNullException("value", "Value cannot be null.");
+                throw new ArgumentNullException(nameof(value), "Value cannot be null.");
             if (!IsT(value))
-                throw new ArgumentException("Value is of incorrect type.", "value");
-            Insert(index, (T)value);
+                throw new ArgumentException("Value is of incorrect type.", nameof(value));
+            Insert(index, (T)value!);
         }
 
         bool System.Collections.IList.IsFixedSize
@@ -329,13 +252,13 @@ namespace Nito.Collections
             get { return false; }
         }
 
-        void System.Collections.IList.Remove(object value)
+        void System.Collections.IList.Remove(object? value)
         {
             if (IsT(value))
-                Remove((T)value);
+                Remove((T)value!);
         }
 
-        object System.Collections.IList.this[int index]
+        object? System.Collections.IList.this[int index]
         {
             get
             {
@@ -348,7 +271,7 @@ namespace Nito.Collections
                     throw new ArgumentNullException(nameof(value), "Value cannot be null.");
                 if (!IsT(value))
                     throw new ArgumentException("Value is of incorrect type.", nameof(value));
-                this[index] = (T)value;
+                this[index] = (T)value!;
             }
         }
 
@@ -861,6 +784,7 @@ namespace Nito.Collections
             return result;
         }
 
+#pragma warning disable CA1812
         [DebuggerNonUserCode]
         private sealed class DebugView
         {
@@ -880,5 +804,6 @@ namespace Nito.Collections
                 }
             }
         }
+#pragma warning restore CA1812
     }
 }

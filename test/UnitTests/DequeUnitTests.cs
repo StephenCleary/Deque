@@ -279,7 +279,7 @@ namespace UnitTests
         {
             var deque = new Deque<int>(new[] { 1, 2, 3 });
             deque.Clear();
-            Assert.Equal(0, deque.Count);
+            Assert.Empty(deque);
             Assert.Equal(new int[] { }, deque);
         }
 
