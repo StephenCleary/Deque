@@ -815,12 +815,12 @@ namespace Nito.Collections
             }
             if (start <= end)
             {
-                span.CopyTo(_buffer.AsSpan().Slice(start, end - start));
+                span.CopyTo(_buffer.AsSpan(start, end - start));
             }
             else
             {
                 int firstPartLength = Capacity - start;
-                span.Slice(0, firstPartLength).CopyTo(_buffer.AsSpan().Slice(start, firstPartLength));
+                span.Slice(0, firstPartLength).CopyTo(_buffer.AsSpan(start, firstPartLength));
                 span.Slice(firstPartLength).CopyTo(_buffer);
             }
         }
