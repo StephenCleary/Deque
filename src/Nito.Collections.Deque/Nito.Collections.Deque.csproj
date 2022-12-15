@@ -2,8 +2,9 @@
 
   <PropertyGroup>
     <Description>A double-ended queue.</Description>
-    <TargetFrameworks>netstandard2.1</TargetFrameworks>
+    <TargetFrameworks>netstandard2.1;netstandard2.0;netstandard1.0;net461</TargetFrameworks>
     <PackageTags>collection;deque;dequeue</PackageTags>
+    <DefineConstants Condition="'$(TargetFramework)' == 'netstandard2.1'">$(DefineConstants);ENABLE_SPANS</DefineConstants>
   </PropertyGroup>
 
 </Project>

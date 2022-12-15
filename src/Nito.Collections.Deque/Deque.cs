@@ -26,6 +26,7 @@ namespace Nito.Collections
             return new Deque<T>(collection);
         }
 
+#if ENABLE_SPANS
         /// <summary>
         /// Creates a new instance of the <see cref="Deque&lt;T&gt;"/> class with the elements copied from the specified span.
         /// </summary>
@@ -45,6 +46,7 @@ namespace Nito.Collections
                 return new Deque<T>(Deque<T>.DefaultCapacity);
             }
         }
+#endif
     }
 
     /// <summary>
@@ -765,6 +767,7 @@ namespace Nito.Collections
             DoAddToFront(value);
         }
 
+#if ENABLE_SPANS
         /// <summary>
         /// Inserts a span of elements at the back of this deque.
         /// </summary>
@@ -824,6 +827,7 @@ namespace Nito.Collections
                 span.Slice(firstPartLength).CopyTo(_buffer);
             }
         }
+#endif
 
         /// <summary>
         /// Inserts a collection of elements into this deque.
@@ -957,6 +961,7 @@ namespace Nito.Collections
             return result;
         }
 
+#if ENABLE_SPANS
         /// <summary>
         /// Returns two spans that together cover all elements of the deque.
         /// </summary>
@@ -1002,6 +1007,7 @@ namespace Nito.Collections
             }
             return totalToCopy;
         }
+#endif
 
 #pragma warning disable CA1812
         [DebuggerNonUserCode]
