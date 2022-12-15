@@ -977,6 +977,32 @@ namespace Nito.Collections
             }
         }
 
+        /// <summary>
+        /// Copies as many elements as possible from the front of the deque to the start of the given span.
+        /// </summary>
+        /// <param name="destination">The destination span, which will receive the elements in front-to-back order.</param>
+        /// <returns>The number of elements copied.</returns>
+        public int CopyFromFrontToSpan(Span<T> destination)
+        {
+            int totalToCopy = Math.Min(Count, destination.Length);
+            if (totalToCopy == 0)
+            {
+                return 0;
+            }
+            if (_offset + totalToCopy < Capacity)
+            {
+                _buffer.AsSpan(_offset, totalToCopy).CopyTo(destination);
+            }
+            else
+            {
+                int fromFirstSpan = Math.Min(totalToCopy, Capacity - _offset);
+                int fromSecondSpan = totalToCopy - fromFirstSpan;
+                _buffer.AsSpan(_offset, fromFirstSpan).CopyTo(destination);
+                _buffer.AsSpan(0, fromSecondSpan).CopyTo(destination.Slice(fromFirstSpan));
+            }
+            return totalToCopy;
+        }
+
 #pragma warning disable CA1812
         [DebuggerNonUserCode]
         private sealed class DebugView

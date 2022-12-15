@@ -622,6 +622,15 @@ namespace UnitTests
                     {
                         Assert.Equal(individualDeque[firstPart.Length + i], secondPart[i]);
                     }
+
+                    {
+                        var copyOfFront = new int[rng.Next(2) == 0 ? bulkDeque.Count : rng.Next(bulkDeque.Count * 5 / 4)];
+                        var n = bulkDeque.CopyFromFrontToSpan(copyOfFront);
+                        for (int i = 0; i < n; ++i)
+                        {
+                            Assert.Equal(bulkDeque[i], copyOfFront[i]);
+                        }
+                    }
                 }
             }
         }
