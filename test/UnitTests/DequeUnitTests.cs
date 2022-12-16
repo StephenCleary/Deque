@@ -612,7 +612,7 @@ namespace UnitTests
 
                     Span<int> firstPart;
                     Span<int> secondPart;
-                    bulkDeque.GetAsSpans(out firstPart, out secondPart);
+                    bulkDeque.AsSpans(out firstPart, out secondPart);
                     Assert.Equal(bulkDeque.Count, firstPart.Length + secondPart.Length);
                     for (int i = 0; i < firstPart.Length; ++i)
                     {

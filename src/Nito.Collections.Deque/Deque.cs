@@ -967,7 +967,7 @@ namespace Nito.Collections
         /// </summary>
         /// <param name="firstPart">Output variable for the span convering the some initial part of the deque. This may be an empty span.</param>
         /// <param name="secondPart">Output variable for the span convering the rest of the deque. This may be an empty span.</param>
-        public void GetAsSpans(out Span<T> firstPart, out Span<T> secondPart)
+        public void AsSpans(out Span<T> firstPart, out Span<T> secondPart)
         {
             if (_offset + Count < Capacity)
             {
