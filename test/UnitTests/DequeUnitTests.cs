@@ -709,6 +709,20 @@ namespace UnitTests
         }
 
         [Fact]
+        public void GetItem_OptionallyReturnsByReference()
+        {
+            var deque = new Deque<int>(new[] { 1, 2, 3 });
+            ref var r = ref deque[1];
+            r = 20;
+            Assert.Equal(20, deque[1]);
+            Assert.Equal(1, deque.RemoveFromFront());
+            Assert.Equal(20, deque[0]);
+            r = 22;
+            Assert.Equal(22, deque[0]);
+            Assert.Equal(22, deque.RemoveFromFront());
+        }
+
+        [Fact]
         public void GetItem_Split_ReadsElements()
         {
             var deque = new Deque<int>(new[] { 1, 2, 3 });

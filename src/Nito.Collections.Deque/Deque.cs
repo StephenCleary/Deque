@@ -132,8 +132,22 @@ namespace Nito.Collections
         /// <returns>true if this list is read-only; otherwise, false.</returns>
         bool ICollection<T>.IsReadOnly => false;
 
+        /// <summary>
+        /// Returns the value at the given index, optionally by reference.
+        /// The reference remains valid as long as the element is not removed from the deque.
+        /// </summary>
+        /// <returns>A reference to the value at the given index.</returns>
+        public ref T this[int index]
+        {
+            get
+            {
+                CheckExistingIndexArgument(Count, index);
+                return ref _buffer[DequeIndexToBufferIndex(index)];
+            }
+        }
+
         /// <inheritdoc cref="IList{T}.this" />
-        public T this[int index]
+        T IList<T>.this[int index]
         {
             get
             {
@@ -145,6 +159,16 @@ namespace Nito.Collections
             {
                 CheckExistingIndexArgument(Count, index);
                 DoSetItem(index, value);
+            }
+        }
+
+        /// <inheritdoc cref="IReadOnlyList{T}.this" />
+        T IReadOnlyList<T>.this[int index]
+        {
+            get
+            {
+                CheckExistingIndexArgument(Count, index);
+                return DoGetItem(index);
             }
         }
 
