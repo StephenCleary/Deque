@@ -833,14 +833,14 @@ namespace Nito.Collections
         /// </summary>
         /// <param name="span">The elements to copy.</param>
         /// <param name="start">The first buffer index to write to.</param>
-        /// <param name="end">One after the last buffer index to write to. May be less than <paramref name="start"/>.</param>
+        /// <param name="end">One after the last buffer index to write to. Wraps around the end if less than or equal to <paramref name="start"/>.</param>
         private void DoCopyFromSpan(ReadOnlySpan<T> span, int start, int end)
         {
             if (end == 0)
             {
                 end = Capacity;
             }
-            if (start <= end)
+            if (start < end)
             {
                 span.CopyTo(_buffer.AsSpan(start, end - start));
             }

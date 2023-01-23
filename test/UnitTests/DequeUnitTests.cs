@@ -522,6 +522,45 @@ namespace UnitTests
         }
 
         [Fact]
+        public void RepeatedAddToBackFromSpanThenRemoveFromFront()
+        {
+            var deque = new Deque<int>(1);
+            for (int i = 0; i < 20; ++i)
+            {
+                List<int> list = new List<int>();
+                for (int j = 0; j < i; ++j)
+                {
+                    list.Add(j);
+                }
+                deque.AddToBackFromSpan(list.ToArray());
+                for (int j = 0; j < i; ++j)
+                {
+                    Assert.Equal(j, deque.RemoveFromFront());
+                }
+            }
+        }
+
+        [Fact]
+        public void RepeatedAddToFrontFromSpanThenRemoveFromBack()
+        {
+            var deque = new Deque<int>(1);
+            for (int i = 0; i < 20; ++i)
+            {
+                List<int> list = new List<int>();
+                for (int j = 0; j < i; ++j)
+                {
+                    list.Add(j);
+                }
+                list.Reverse();
+                deque.AddToFrontFromSpan(list.ToArray());
+                for (int j = 0; j < i; ++j)
+                {
+                    Assert.Equal(j, deque.RemoveFromBack());
+                }
+            }
+        }
+
+        [Fact]
         public void AddToFrontFromSpan()
         {
             var deque = new Deque<int>(1);
