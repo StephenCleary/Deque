@@ -1,4 +1,7 @@
-# build.yml v1.5
+# build.yml v1.6
+# 1.6:
+#     - Use --getProperty:Version instead of Nito.ProjProps.
+#     - Updates: acitons/checkout@v4
 # 1.5:
 #     - Use bash syntax
 #     - Avoid set-output
@@ -41,7 +44,7 @@ jobs:
         echo "name=nuget::nuget-" >> $GITHUB_OUTPUT
 
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         fetch-depth: 0 # Required by WyriHaximus/github-action-get-previous-tag@v1
 
@@ -59,9 +62,8 @@ jobs:
 
     - name: Get current version
       run: |
-        dotnet tool install --global Nito.ProjProps --version 2.0.0-pre01
-        echo "NEWTAG=v$(projprops --name version --project src)"
-        echo "NEWTAG=v$(projprops --name version --project src)" >> $GITHUB_ENV
+        echo "NEWTAG=v$(dotnet build $(find src -name *.csproj | head --lines=1) --getProperty:Version)"
+        echo "NEWTAG=v$(dotnet build $(find src -name *.csproj | head --lines=1) --getProperty:Version)" >> $GITHUB_ENV
 
     - name: Build
       run: |
