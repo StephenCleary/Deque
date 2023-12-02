@@ -1,12 +1,14 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using Nito.Collections;
 using Xunit;
-using System.Collections.Generic;
-using System.Collections;
+
+#pragma warning disable xUnit2013  // "Do not use Assert.Equal() to check for collection size"
 
 namespace UnitTests
 {
-    public class Deque
+    public class DequeUnitTests
     {
         [Fact]
         public void Capacity_SetTo0_ActsLikeList()
@@ -145,6 +147,15 @@ namespace UnitTests
         public void Constructor_FromSequence_InitializesFromSequence()
         {
             var deque = new Deque<int>(new int[] { 1, 2, 3 });
+            Assert.Equal(3, deque.Capacity);
+            Assert.Equal(3, deque.Count);
+            Assert.Equal(new int[] { 1, 2, 3 }, deque);
+        }
+
+        [Fact]
+        public void Constructor_FromSequence_InitializesFromSpan()
+        {
+            var deque = Deque.FromSpan<int>(new int[] { 1, 2, 3 });
             Assert.Equal(3, deque.Capacity);
             Assert.Equal(3, deque.Count);
             Assert.Equal(new int[] { 1, 2, 3 }, deque);
@@ -493,6 +504,177 @@ namespace UnitTests
         }
 
         [Fact]
+        public void AddToBackFromSpan()
+        {
+            var deque = new Deque<int>(1);
+            deque.AddToBackFromSpan(new[] { 1, 2, 3 });
+            Assert.Equal(4, deque.Capacity);  // Should have doubled twice
+            Assert.Equal(1, deque.RemoveFromFront());
+            Assert.Equal(2, deque.RemoveFromFront());
+            Assert.Equal(1, deque.Count);
+            deque.AddToBackFromSpan(new[] { 4, 5, 6 });  // Inserts to both ends of the buffer
+            Assert.Equal(4, deque.Count);
+            Assert.Equal(4, deque.Capacity);
+            Assert.Equal(3, deque.RemoveFromFront());
+            Assert.Equal(4, deque.RemoveFromFront());
+            Assert.Equal(5, deque.RemoveFromFront());
+            Assert.Equal(6, deque.RemoveFromFront());
+        }
+
+        [Fact]
+        public void RepeatedAddToBackFromSpanThenRemoveFromFront()
+        {
+            var deque = new Deque<int>(1);
+            for (int i = 0; i < 20; ++i)
+            {
+                List<int> list = new List<int>();
+                for (int j = 0; j < i; ++j)
+                {
+                    list.Add(j);
+                }
+                deque.AddToBackFromSpan(list.ToArray());
+                for (int j = 0; j < i; ++j)
+                {
+                    Assert.Equal(j, deque.RemoveFromFront());
+                }
+            }
+        }
+
+        [Fact]
+        public void RepeatedAddToFrontFromSpanThenRemoveFromBack()
+        {
+            var deque = new Deque<int>(1);
+            for (int i = 0; i < 20; ++i)
+            {
+                List<int> list = new List<int>();
+                for (int j = 0; j < i; ++j)
+                {
+                    list.Add(j);
+                }
+                list.Reverse();
+                deque.AddToFrontFromSpan(list.ToArray());
+                for (int j = 0; j < i; ++j)
+                {
+                    Assert.Equal(j, deque.RemoveFromBack());
+                }
+            }
+        }
+
+        [Fact]
+        public void AddToFrontFromSpan()
+        {
+            var deque = new Deque<int>(1);
+            deque.AddToFrontFromSpan(new[] { 4, 5, 6 });
+            Assert.Equal(4, deque.Capacity);  // Should have doubled twice
+            Assert.Equal(6, deque.RemoveFromBack());
+            Assert.Equal(5, deque.RemoveFromBack());
+            Assert.Equal(1, deque.Count);
+            deque.AddToFrontFromSpan(new[] { 1, 2, 3 });  // Inserts to both ends of the buffer
+            Assert.Equal(4, deque.Count);
+            Assert.Equal(4, deque.Capacity);
+            Assert.Equal(4, deque.RemoveFromBack());
+            Assert.Equal(3, deque.RemoveFromBack());
+            Assert.Equal(2, deque.RemoveFromBack());
+            Assert.Equal(1, deque.RemoveFromBack());
+        }
+
+        [Fact]
+        public void Randomized_BulkAddAndRemoveTest()
+        {
+            var rng = new Random(123456789);
+            const int maxOperationSize = 16;
+            int[] GenerateSomeRandomInts()
+            {
+                var n = rng.Next(maxOperationSize);
+                var ints = new int[n];
+                for (int i = 0; i < n; ++i)
+                {
+                    ints[i] = rng.Next(10000);
+                }
+                return ints;
+            }
+
+            for (int repetition = 0; repetition < 50; ++repetition)
+            {
+                var individualDeque = new Deque<int>(0);
+                var bulkDeque = new Deque<int>(0);
+                for (int actionCounter = 0; actionCounter < 100; ++actionCounter)
+                {
+                    int action = rng.Next(4);
+                    switch (action)
+                    {
+                        case 0:
+                            {
+                                var values = GenerateSomeRandomInts();
+                                bulkDeque.AddToBackFromSpan(values);
+                                foreach (var v in values)
+                                {
+                                    individualDeque.AddToBack(v);
+                                }
+                                break;
+                            }
+                        case 1:
+                            {
+                                var values = GenerateSomeRandomInts();
+                                bulkDeque.AddToFrontFromSpan(values);
+                                Array.Reverse(values);
+                                foreach (var v in values)
+                                {
+                                    individualDeque.AddToFront(v);
+                                }
+                                break;
+                            }
+                        case 2:
+                            {
+                                var n = rng.Next(Math.Min(individualDeque.Count, maxOperationSize));
+                                bulkDeque.RemoveFromBack(n);
+                                for (int i = 0; i < n; ++i)
+                                {
+                                    individualDeque.RemoveFromBack();
+                                }
+                                break;
+                            }
+                        case 3:
+                            {
+                                var n = rng.Next(Math.Min(individualDeque.Count, maxOperationSize));
+                                bulkDeque.RemoveFromFront(n);
+                                for (int i = 0; i < n; ++i)
+                                {
+                                    individualDeque.RemoveFromFront();
+                                }
+                                break;
+                            }
+                    }
+
+                    Assert.Equal(individualDeque.Count, bulkDeque.Count);
+                    Assert.Equal(individualDeque, bulkDeque);
+
+                    Span<int> firstPart;
+                    Span<int> secondPart;
+                    bulkDeque.AsSpans(out firstPart, out secondPart);
+                    Assert.Equal(bulkDeque.Count, firstPart.Length + secondPart.Length);
+                    for (int i = 0; i < firstPart.Length; ++i)
+                    {
+                        Assert.Equal(individualDeque[i], firstPart[i]);
+                    }
+                    for (int i = 0; i < secondPart.Length; ++i)
+                    {
+                        Assert.Equal(individualDeque[firstPart.Length + i], secondPart[i]);
+                    }
+
+                    {
+                        var copyOfFront = new int[rng.Next(2) == 0 ? bulkDeque.Count : rng.Next(bulkDeque.Count * 5 / 4)];
+                        var n = bulkDeque.CopyFromFrontToSpan(copyOfFront);
+                        for (int i = 0; i < n; ++i)
+                        {
+                            Assert.Equal(bulkDeque[i], copyOfFront[i]);
+                        }
+                    }
+                }
+            }
+        }
+
+        [Fact]
         public void RemoveMultiple()
         {
             RemoveTest(new[] { 1, 2, 3 });
@@ -563,6 +745,20 @@ namespace UnitTests
             Assert.Equal(1, deque[0]);
             Assert.Equal(2, deque[1]);
             Assert.Equal(3, deque[2]);
+        }
+
+        [Fact]
+        public void GetItem_OptionallyReturnsByReference()
+        {
+            var deque = new Deque<int>(new[] { 1, 2, 3 });
+            ref var r = ref deque[1];
+            r = 20;
+            Assert.Equal(20, deque[1]);
+            Assert.Equal(1, deque.RemoveFromFront());
+            Assert.Equal(20, deque[0]);
+            r = 22;
+            Assert.Equal(22, deque[0]);
+            Assert.Equal(22, deque.RemoveFromFront());
         }
 
         [Fact]

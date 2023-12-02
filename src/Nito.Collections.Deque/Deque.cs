@@ -5,6 +5,51 @@ using System.Diagnostics;
 namespace Nito.Collections
 {
     /// <summary>
+    /// Static factory methods for the <see cref="Deque&lt;T&gt;"/> class.
+    /// </summary>
+    public static class Deque
+    {
+        /// <summary>
+        /// Creates a new empty of the <see cref="Deque&lt;T&gt;"/> class.
+        /// </summary>
+        public static Deque<T> Empty<T>()
+        {
+            return new Deque<T>();
+        }
+
+        /// <summary>
+        /// Creates a new instance of the <see cref="Deque&lt;T&gt;"/> class with the elements copied from the specified collection.
+        /// </summary>
+        /// <param name="collection">The collection. May not be <c>null</c>.</param>
+        public static Deque<T> FromCollection<T>(IEnumerable<T> collection)
+        {
+            return new Deque<T>(collection);
+        }
+
+#if ENABLE_SPANS
+        /// <summary>
+        /// Creates a new instance of the <see cref="Deque&lt;T&gt;"/> class with the elements copied from the specified span.
+        /// </summary>
+        /// <param name="span">The span. May not be <c>null</c>.</param>
+        public static Deque<T> FromSpan<T>(ReadOnlySpan<T> span)
+        {
+            if (span == null)
+                throw new ArgumentNullException(nameof(span));
+
+            var length = span.Length;
+            if (length > 0)
+            {
+                return new Deque<T>(span.ToArray(), length);
+            }
+            else
+            {
+                return new Deque<T>(Deque<T>.DefaultCapacity);
+            }
+        }
+#endif
+    }
+
+    /// <summary>
     /// A double-ended queue (deque), which provides O(1) indexed access, O(1) removals from the front and back, amortized O(1) insertions to the front and back, and O(N) insertions and removals anywhere else (with the operations getting slower as the index approaches the middle).
     /// </summary>
     /// <typeparam name="T">The type of elements contained in the deque.</typeparam>
@@ -15,7 +60,7 @@ namespace Nito.Collections
         /// <summary>
         /// The default capacity.
         /// </summary>
-        private const int DefaultCapacity = 8;
+        internal const int DefaultCapacity = 8;
 
         /// <summary>
         /// The circular _buffer that holds the view.
@@ -68,6 +113,17 @@ namespace Nito.Collections
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Deque&lt;T&gt;"/> with the given buffer.
+        /// </summary>
+        /// <param name="buffer">The initial buffer. The deque takes ownership of this array.</param>
+        /// <param name="count">The number of elements at the start of buffer. The rest of the buffer is taken as spare capacity.</param>
+        internal Deque(T[] buffer, int count)
+        {
+            this._buffer = buffer;
+            this.Count = count;
+        }
+
         #region GenericListImplementations
 
         /// <summary>
@@ -76,8 +132,22 @@ namespace Nito.Collections
         /// <returns>true if this list is read-only; otherwise, false.</returns>
         bool ICollection<T>.IsReadOnly => false;
 
+        /// <summary>
+        /// Returns the value at the given index, optionally by reference.
+        /// The reference remains valid as long as the element is not removed from the deque.
+        /// </summary>
+        /// <returns>A reference to the value at the given index.</returns>
+        public ref T this[int index]
+        {
+            get
+            {
+                CheckExistingIndexArgument(Count, index);
+                return ref _buffer[DequeIndexToBufferIndex(index)];
+            }
+        }
+
         /// <inheritdoc cref="IList{T}.this" />
-        public T this[int index]
+        T IList<T>.this[int index]
         {
             get
             {
@@ -89,6 +159,16 @@ namespace Nito.Collections
             {
                 CheckExistingIndexArgument(Count, index);
                 DoSetItem(index, value);
+            }
+        }
+
+        /// <inheritdoc cref="IReadOnlyList{T}.this" />
+        T IReadOnlyList<T>.this[int index]
+        {
+            get
+            {
+                CheckExistingIndexArgument(Count, index);
+                return DoGetItem(index);
             }
         }
 
@@ -426,7 +506,7 @@ namespace Nito.Collections
         /// </summary>
         /// <returns>The number of elements contained in this deque.</returns>
         public int Count { get; private set; }
-        
+
         /// <summary>
         /// Applies the offset to <paramref name="index"/>, resulting in a buffer index.
         /// </summary>
@@ -504,7 +584,7 @@ namespace Nito.Collections
         /// Increments <see cref="_offset"/> by <paramref name="value"/> using modulo-<see cref="Capacity"/> arithmetic.
         /// </summary>
         /// <param name="value">The value by which to increase <see cref="_offset"/>. May not be negative.</param>
-        /// <returns>The value of <see cref="_offset"/> after it was incremented.</returns>
+        /// <returns>The value of <see cref="_offset"/> before it was incremented.</returns>
         private int PostIncrement(int value)
         {
             int ret = _offset;
@@ -517,7 +597,7 @@ namespace Nito.Collections
         /// Decrements <see cref="_offset"/> by <paramref name="value"/> using modulo-<see cref="Capacity"/> arithmetic.
         /// </summary>
         /// <param name="value">The value by which to reduce <see cref="_offset"/>. May not be negative or greater than <see cref="Capacity"/>.</param>
-        /// <returns>The value of <see cref="_offset"/> before it was decremented.</returns>
+        /// <returns>The value of <see cref="_offset"/> after it was decremented.</returns>
         private int PreDecrement(int value)
         {
             _offset -= value;
@@ -675,6 +755,23 @@ namespace Nito.Collections
         }
 
         /// <summary>
+        /// Ensures capacity is large enough to fit `n` more elements by doubling it as many times as is necessary.
+        /// </summary>
+        private void EnsureCapacityFor(int n)
+        {
+            int newCapacity = Capacity;
+            if (newCapacity == 0 && n > 0)
+            {
+                newCapacity = 1;
+            }
+            while (Count + n > newCapacity)
+            {
+                newCapacity = newCapacity * 2;
+            }
+            Capacity = newCapacity;
+        }
+
+        /// <summary>
         /// Inserts a single element at the back of this deque.
         /// </summary>
         /// <param name="value">The element to insert.</param>
@@ -693,6 +790,68 @@ namespace Nito.Collections
             EnsureCapacityForOneElement();
             DoAddToFront(value);
         }
+
+#if ENABLE_SPANS
+        /// <summary>
+        /// Inserts a span of elements at the back of this deque.
+        /// </summary>
+        /// <param name="span">The elements to insert.</param>
+        public void AddToBackFromSpan(ReadOnlySpan<T> span)
+        {
+            int n = span.Length;
+            if (n == 0)
+            {
+                return;
+            }
+            EnsureCapacityFor(n);
+            int start = DequeIndexToBufferIndex(Count);
+            int end = DequeIndexToBufferIndex(Count + n);
+            DoCopyFromSpan(span, start, end);
+            Count += n;
+        }
+
+        /// <summary>
+        /// Inserts a span of elements at the front of this deque.
+        /// </summary>
+        /// <param name="span">The elements to insert. The elements will keep their order.</param>
+        public void AddToFrontFromSpan(ReadOnlySpan<T> span)
+        {
+            int n = span.Length;
+            if (n == 0)
+            {
+                return;
+            }
+            EnsureCapacityFor(n);
+            int end = _offset;
+            int start = PreDecrement(n);
+            DoCopyFromSpan(span, start, end);
+            Count += n;
+        }
+
+        /// <summary>
+        /// Copies elements from a span to the buffer.
+        /// </summary>
+        /// <param name="span">The elements to copy.</param>
+        /// <param name="start">The first buffer index to write to.</param>
+        /// <param name="end">One after the last buffer index to write to. Wraps around the end if less than or equal to <paramref name="start"/>.</param>
+        private void DoCopyFromSpan(ReadOnlySpan<T> span, int start, int end)
+        {
+            if (end == 0)
+            {
+                end = Capacity;
+            }
+            if (start < end)
+            {
+                span.CopyTo(_buffer.AsSpan(start, end - start));
+            }
+            else
+            {
+                int firstPartLength = Capacity - start;
+                span.Slice(0, firstPartLength).CopyTo(_buffer.AsSpan(start, firstPartLength));
+                span.Slice(firstPartLength).CopyTo(_buffer);
+            }
+        }
+#endif
 
         /// <summary>
         /// Inserts a collection of elements into this deque.
@@ -753,6 +912,22 @@ namespace Nito.Collections
         }
 
         /// <summary>
+        /// Removes <paramref name="n"/> elements from the back of the deque, or all elements if there are fewer than <paramref name="n"/>.
+        /// </summary>
+        /// <param name="n">The number of elements to remove.</param>
+        public void RemoveFromBack(int n)
+        {
+            if (n < Count)
+            {
+                Count -= n;
+            }
+            else
+            {
+                Count = 0;
+            }
+        }
+
+        /// <summary>
         /// Removes and returns the first element of this deque.
         /// </summary>
         /// <returns>The former first element.</returns>
@@ -766,12 +941,38 @@ namespace Nito.Collections
         }
 
         /// <summary>
+        /// Removes <paramref name="n"/> elements from the front of the deque, or all elements if there are fewer than <paramref name="n"/>.
+        /// </summary>
+        /// <param name="n">The number of elements to remove.</param>
+        public void RemoveFromFront(int n)
+        {
+            if (n < Count)
+            {
+                PostIncrement(n);
+                Count -= n;
+            }
+            else
+            {
+                Count = 0;
+            }
+        }
+
+        /// <summary>
         /// Removes all items from this deque.
         /// </summary>
         public void Clear()
         {
             _offset = 0;
             Count = 0;
+        }
+
+        /// <summary>
+        /// Removes all items from this deque and sets all elements of the internal buffer to <c>default(T)</c>.
+        /// </summary>
+        public void ClearAndZero()
+        {
+            Clear();
+            Array.Clear(_buffer, 0, Capacity);
         }
 
         /// <summary>
@@ -783,6 +984,54 @@ namespace Nito.Collections
             ((ICollection<T>)this).CopyTo(result, 0);
             return result;
         }
+
+#if ENABLE_SPANS
+        /// <summary>
+        /// Returns two spans that together cover all elements of the deque.
+        /// </summary>
+        /// <param name="firstPart">Output variable for the span convering the some initial part of the deque. This may be an empty span.</param>
+        /// <param name="secondPart">Output variable for the span convering the rest of the deque. This may be an empty span.</param>
+        public void AsSpans(out Span<T> firstPart, out Span<T> secondPart)
+        {
+            if (_offset + Count < Capacity)
+            {
+                firstPart = _buffer.AsSpan(_offset, Count);
+                secondPart = Span<T>.Empty;
+            }
+            else
+            {
+                int firstPartLength = Capacity - _offset;
+                firstPart = _buffer.AsSpan(_offset, firstPartLength);
+                secondPart = _buffer.AsSpan(0, Count - firstPartLength);
+            }
+        }
+
+        /// <summary>
+        /// Copies as many elements as possible from the front of the deque to the start of the given span.
+        /// </summary>
+        /// <param name="destination">The destination span, which will receive the elements in front-to-back order.</param>
+        /// <returns>The number of elements copied.</returns>
+        public int CopyFromFrontToSpan(Span<T> destination)
+        {
+            int totalToCopy = Math.Min(Count, destination.Length);
+            if (totalToCopy == 0)
+            {
+                return 0;
+            }
+            if (_offset + totalToCopy < Capacity)
+            {
+                _buffer.AsSpan(_offset, totalToCopy).CopyTo(destination);
+            }
+            else
+            {
+                int fromFirstSpan = Math.Min(totalToCopy, Capacity - _offset);
+                int fromSecondSpan = totalToCopy - fromFirstSpan;
+                _buffer.AsSpan(_offset, fromFirstSpan).CopyTo(destination);
+                _buffer.AsSpan(0, fromSecondSpan).CopyTo(destination.Slice(fromFirstSpan));
+            }
+            return totalToCopy;
+        }
+#endif
 
 #pragma warning disable CA1812
         [DebuggerNonUserCode]
