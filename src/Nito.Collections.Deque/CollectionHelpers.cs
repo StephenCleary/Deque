@@ -8,8 +8,11 @@ namespace Nito.Collections
     {
         public static IReadOnlyCollection<T> ReifyCollection<T>(IEnumerable<T> source)
         {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
+#if NET461 || NETSTANDARD1_0 || NETSTANDARD2_0
+			_ = source ?? throw new ArgumentNullException(nameof(source));
+#else
+            ArgumentNullException.ThrowIfNull(source);
+#endif
 
             var result = source as IReadOnlyCollection<T>;
             if (result != null)
@@ -30,8 +33,12 @@ namespace Nito.Collections
 
             public NongenericCollectionWrapper(ICollection collection)
             {
-                if (collection == null)
-                    throw new ArgumentNullException(nameof(collection));
+#if NET461 || NETSTANDARD1_0 || NETSTANDARD2_0
+				_ = collection ?? throw new ArgumentNullException(nameof(collection));
+#else
+				ArgumentNullException.ThrowIfNull(collection);
+#endif
+
                 _collection = collection;
             }
 
@@ -61,8 +68,11 @@ namespace Nito.Collections
 
             public CollectionWrapper(ICollection<T> collection)
             {
-                if (collection == null)
-                    throw new ArgumentNullException(nameof(collection));
+#if NET461 || NETSTANDARD1_0 || NETSTANDARD2_0
+				_ = collection ?? throw new ArgumentNullException(nameof(collection));
+#else
+	            ArgumentNullException.ThrowIfNull(collection);
+#endif
                 _collection = collection;
             }
 

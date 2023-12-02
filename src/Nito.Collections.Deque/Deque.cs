@@ -44,8 +44,11 @@ namespace Nito.Collections
         /// <param name="collection">The collection. May not be <c>null</c>.</param>
         public Deque(IEnumerable<T> collection)
         {
-            if (collection == null)
-                throw new ArgumentNullException(nameof(collection));
+#if NET461 || NETSTANDARD1_0 || NETSTANDARD2_0
+			_ = collection ?? throw new ArgumentNullException(nameof(collection));
+#else
+	        ArgumentNullException.ThrowIfNull(collection);
+#endif
 
             var source = CollectionHelpers.ReifyCollection(collection);
             var count = source.Count;
@@ -142,10 +145,13 @@ namespace Nito.Collections
         /// <inheritdoc/>
         void ICollection<T>.CopyTo(T[] array, int arrayIndex)
         {
-            if (array == null)
-                throw new ArgumentNullException(nameof(array));
+#if NET461 || NETSTANDARD1_0 || NETSTANDARD2_0
+			_ = array ?? throw new ArgumentNullException(nameof(array));
+#else
+			ArgumentNullException.ThrowIfNull(array);
+#endif
 
-            int count = Count;
+			int count = Count;
             CheckRangeArguments(array.Length, arrayIndex, count);
             CopyToArray(array, arrayIndex);
         }
@@ -157,10 +163,13 @@ namespace Nito.Collections
         /// <param name="arrayIndex">The optional index in the destination array at which to begin writing.</param>
         private void CopyToArray(Array array, int arrayIndex = 0)
         {
-            if (array == null)
-                throw new ArgumentNullException(nameof(array));
+#if NET461 || NETSTANDARD1_0 || NETSTANDARD2_0
+			_ = array ?? throw new ArgumentNullException(nameof(array));
+#else
+	        ArgumentNullException.ThrowIfNull(array);
+#endif
 
-            if (IsSplit)
+			if (IsSplit)
             {
                 // The existing buffer is split, so we have to copy it in parts
                 int length = Capacity - _offset;
