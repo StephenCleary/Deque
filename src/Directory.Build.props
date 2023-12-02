@@ -1,7 +1,10 @@
 <Project>
   <!--
       Directory.Build.props (src) v2.3
-      - 2.3 Remove old Coverlet workaround for .NET SDKs < 3.1.300; and remove source link settings for .NET SDKs < 8.
+      - 2.3:
+        - Remove old Coverlet workaround for .NET SDKs < 3.1.300
+        - Remove source link settings for .NET SDKs < 8
+        - Add trim/single-file/AOT checks.
       - 2.2 Migrate from FxCopAnalyzers to NetAnalyzers.
       - 2.1 Specify LangVersion (required by Nullable for most libraries).
       - 2.0 Move project-specific properties to `project.props`.
@@ -18,9 +21,8 @@
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AnalysisMode>AllEnabledByDefault</AnalysisMode>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(CI)'=='true'">
-    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+    <ContinuousIntegrationBuild Condition="'$(CI)'=='true'">true</ContinuousIntegrationBuild>
+    <IsAotCompatible Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net7.0'))">true</IsAotCompatible>
   </PropertyGroup>
 
   <!-- Package settings -->
