@@ -1,6 +1,7 @@
 <Project>
   <!--
-      Directory.Build.props (src) v2.2
+      Directory.Build.props (src) v2.3
+      - 2.3 Remove old Coverlet workaround for .NET SDKs < 3.1.300; and remove source link settings for .NET SDKs < 8.
       - 2.2 Migrate from FxCopAnalyzers to NetAnalyzers.
       - 2.1 Specify LangVersion (required by Nullable for most libraries).
       - 2.0 Move project-specific properties to `project.props`.
@@ -36,17 +37,6 @@
     <None Include="..\icon.png" Pack="true" PackagePath="\"/>
   </ItemGroup>
 
-  <!-- Source debugging -->
-  <PropertyGroup>
-    <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <EmbedUntrackedSources>true</EmbedUntrackedSources>
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-  </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All"/>
-  </ItemGroup>
-
   <!-- Include reference assemblies -->
   <ItemGroup>
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.0" PrivateAssets="All"/>
@@ -56,17 +46,4 @@
   <PropertyGroup Condition="'$(CI)'!='true'">
     <VersionSuffix>dev</VersionSuffix>
   </PropertyGroup>
-
-  <!-- Enable coverlet analysis on deterministic builds: https://github.com/coverlet-coverage/coverlet/blob/master/Documentation/DeterministicBuild.md -->
-  <ItemGroup>
-    <SourceRoot Include="$(NuGetPackageRoot)" />
-  </ItemGroup>
-  <Target Name="CoverletGetPathMap"
-          DependsOnTargets="InitializeSourceRootMappedPaths"
-          Returns="@(_LocalTopLevelSourceRoot)"
-          Condition="'$(DeterministicSourcePaths)' == 'true'">
-    <ItemGroup>
-      <_LocalTopLevelSourceRoot Include="@(SourceRoot)" Condition="'%(SourceRoot.NestedRoot)' == ''"/>
-    </ItemGroup>
-  </Target>
 </Project>
