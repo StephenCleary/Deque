@@ -907,12 +907,12 @@ namespace UnitTests
             var list = new List<int>(new[] { 13 }) as IList;
             list.Remove(this);
             list.Remove(null);
-            Assert.Equal(1, list.Count);
+            Assert.Single(list);
 
             var deque = new Deque<int>(new[] { 13 }) as IList;
             deque.Remove(this);
             deque.Remove(null);
-            Assert.Equal(1, deque.Count);
+            Assert.Single(deque);
         }
 
         [Fact]
