@@ -1,4 +1,4 @@
-## 1.2.0 (2023-12-02)
+## 1.2.1 (2023-12-02)
 
 - Add explicit `net8.0` target.
 - Support trimming, AOT, and single-file (`net8.0` only).
