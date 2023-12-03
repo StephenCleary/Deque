@@ -24,7 +24,6 @@ env:
   DOTNET_CLI_TELEMETRY_OPTOUT: 'true'
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 'true'
   NUGET_XMLDOC_MODE: 'skip'
-  MSBuildEnableWorkloadResolver: 'false' # Work around SDK bug https://github.com/dotnet/sdk/issues/17461
 
 jobs:
   build:
