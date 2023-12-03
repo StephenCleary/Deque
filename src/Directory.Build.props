@@ -5,6 +5,7 @@
         - Remove old Coverlet workaround for .NET SDKs < 3.1.300
         - Remove source link settings for .NET SDKs < 8
         - Add trim/single-file/AOT checks.
+        - Add repo-scope README.md to package.
       - 2.2 Migrate from FxCopAnalyzers to NetAnalyzers.
       - 2.1 Specify LangVersion (required by Nullable for most libraries).
       - 2.0 Move project-specific properties to `project.props`.
@@ -29,7 +30,11 @@
   <PropertyGroup>
     <PackageProjectUrl>https://github.com/$(GITHUB_REPOSITORY)</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\"/>
+  </ItemGroup>
 
   <!-- Icon file -->
   <PropertyGroup>
